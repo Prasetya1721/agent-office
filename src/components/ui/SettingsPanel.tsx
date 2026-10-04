@@ -17,6 +17,7 @@ export function SettingsPanel() {
   const agents = useAppStore((s) => s.agents);
   const settings = useAppStore((s) => s.settings);
   const addProvider = useAppStore((s) => s.addProvider);
+  const updateProvider = useAppStore((s) => s.updateProvider);
   const removeProvider = useAppStore((s) => s.removeProvider);
   const updateAgent = useAppStore((s) => s.updateAgent);
   const addAgent = useAppStore((s) => s.addAgent);
@@ -447,11 +448,16 @@ export function SettingsPanel() {
                   modelConfig: {
                     provider: 'anthropic',
                     model: 'claude-3-5-sonnet-latest',
+                    temperature: 0.3,
+                    maxTokens: 4096,
                   },
                   systemPrompt: 'You are a helpful AI agent.',
+                  description: 'AI specialist baru',
                   skills: [],
+                  tools: [],
                   status: 'idle',
                   currentTaskSummary: 'Menunggu tugas',
+                  sessionStats: '0 ses',
                   roomZone: 'work',
                 });
               }}
