@@ -1,0 +1,253 @@
+/* ============================================
+   AgentOffice - 3D Scene & HTML Overlay Styling
+   ============================================ */
+.scene3d-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-scene, #f8fafc);
+  overflow: hidden;
+}
+
+body.dark .scene3d-container {
+  background: #0b0f19;
+}
+
+/* Floating Room Zone Badges (Pojok Kopi, Ruangan Kerja, Ruang Meeting) */
+.room-zone-pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.room-zone-pill.break {
+  background: rgba(245, 158, 11, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #ffffff;
+}
+
+.room-zone-pill.work {
+  background: rgba(37, 99, 235, 0.85);
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  color: #ffffff;
+}
+
+.room-zone-pill.meeting {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* Hide 3D floating labels while modal is open */
+.modal-active .room-zone-pill,
+.modal-active .agent-overhead-capsule,
+.modal-active .agent-speech-balloon {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* Overhead Agent Capsule Badges matching Reference Screenshot */
+/* Example: "● Arka [AO] • sprint 3 review" */
+.agent-overhead-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+}
+
+.agent-overhead-capsule.hovered {
+  transform: translateY(-6px) scale(1.08);
+}
+
+.agent-overhead-capsule.selected {
+  transform: translateY(-6px) scale(1.1);
+  background: rgba(15, 23, 42, 0.96);
+}
+
+.agent-capsule-dot {
+  width: 6px;
+  height: 6px;
+  min-width: 6px;
+  border-radius: 50%;
+  animation: live-pulse 1.4s infinite ease-in-out;
+}
+
+.agent-capsule-name {
+  color: #ffffff;
+  letter-spacing: -0.1px;
+}
+
+.agent-capsule-tag {
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 600;
+}
+
+.agent-capsule-divider {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 8px;
+}
+
+.agent-capsule-status {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Speaking Speech Balloon during Sprint */
+.agent-speech-balloon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  color: #ffffff;
+  backdrop-filter: blur(14px);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transform: scale(1.06);
+  animation: balloon-float 2s infinite ease-in-out;
+}
+
+@keyframes balloon-float {
+  0% { transform: translateY(0px) scale(1.06); }
+  50% { transform: translateY(-3px) scale(1.06); }
+  100% { transform: translateY(0px) scale(1.06); }
+}
+
+.speech-icon {
+  font-size: 12px;
+}
+
+.speech-text {
+  color: #f1f5f9;
+}
+
+/* Large TV Screen Inside Meeting Room matching "15:03" in screenshot */
+.meeting-tv-display {
+  width: 320px;
+  background: #020617;
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  user-select: none;
+}
+
+.tv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.tv-live-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.8px;
+}
+
+.tv-clock {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tv-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.tv-metric-item {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.tv-m-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.tv-m-lbl {
+  font-size: 8px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tv-footer {
+  font-size: 9.5px;
+  color: #cbd5e1;
+  background: rgba(56, 189, 248, 0.08);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3D Navigation Hint Pill */
+.scene-interaction-hint {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 10;
+}

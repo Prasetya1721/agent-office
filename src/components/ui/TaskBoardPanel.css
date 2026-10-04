@@ -1,0 +1,214 @@
+.taskboard-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.taskboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.taskboard-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.taskboard-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.taskboard-add-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+.taskboard-add-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Add form */
+.taskboard-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(99, 102, 241, 0.03);
+}
+
+.taskboard-input, .taskboard-textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+  resize: none;
+}
+
+.taskboard-input:focus, .taskboard-textarea:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+.taskboard-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.taskboard-form-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.taskboard-form-btn.primary {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-color: transparent;
+  color: white;
+}
+
+.taskboard-form-btn:hover {
+  opacity: 0.8;
+}
+
+/* Columns */
+.taskboard-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.taskboard-column {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  transition: background 0.2s ease;
+}
+
+.taskboard-column.droppable {
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.taskboard-column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+
+.taskboard-column-icon {
+  font-size: 14px;
+}
+
+.taskboard-column-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--col-color);
+}
+
+.taskboard-column-count {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--col-color) 15%, transparent);
+  color: var(--col-color);
+  font-weight: 600;
+}
+
+.taskboard-column-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Task cards */
+.taskboard-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.taskboard-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
+}
+
+.taskboard-card:active {
+  cursor: grabbing;
+}
+
+.taskboard-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 4px;
+}
+
+.taskboard-card-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.taskboard-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.taskboard-card-agent {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.taskboard-card-time {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.taskboard-empty {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  padding: 12px;
+}
