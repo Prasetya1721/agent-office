@@ -51,6 +51,18 @@ body.dark .scene3d-container {
   color: #ffffff;
 }
 
+.room-zone-pill.lounge {
+  background: rgba(13, 148, 136, 0.88);
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  color: #ffffff;
+}
+
+.room-zone-pill.garden {
+  background: rgba(22, 101, 52, 0.88);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #ffffff;
+}
+
 /* Hide 3D floating labels while modal is open */
 .modal-active .room-zone-pill,
 .modal-active .agent-overhead-capsule,
@@ -104,6 +116,13 @@ body.dark .scene3d-container {
 .agent-capsule-name {
   color: #ffffff;
   letter-spacing: -0.1px;
+}
+
+/* Per-agent role emoji, mirroring the icon shown in the 2D panels */
+.agent-capsule-icon {
+  font-size: 11px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 .agent-capsule-tag {
@@ -234,20 +253,59 @@ body.dark .scene3d-container {
   text-overflow: ellipsis;
 }
 
-/* 3D Navigation Hint Pill */
+/* 3D Navigation Hint — collapsed "?" chip that expands on hover/focus.
+   Previously a permanent text pill that sat over the scene at all times. */
 .scene-interaction-hint {
   position: absolute;
   bottom: 12px;
   right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 0;
   background: rgba(15, 23, 42, 0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 4px;
+  border-radius: 999px;
   font-size: 10px;
   font-weight: 500;
-  pointer-events: none;
   z-index: 10;
+  cursor: help;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.scene-hint-q {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #cbd5e1;
+  flex-shrink: 0;
+}
+
+.scene-hint-text {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  padding-right: 0;
+  transition: max-width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+}
+
+.scene-interaction-hint:hover,
+.scene-interaction-hint:focus-visible {
+  border-radius: 8px;
+}
+
+.scene-interaction-hint:hover .scene-hint-text,
+.scene-interaction-hint:focus-visible .scene-hint-text {
+  max-width: 520px;
+  opacity: 1;
+  padding-right: 8px;
 }

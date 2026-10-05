@@ -14,25 +14,31 @@ import { useAppStore } from '../../store/useAppStore';
 import './Scene3D.css';
 
 // 9 Agent Workstation Positions - Aligned with individual spacious desk pods
-// All desks face North (-Z) so computer monitors face South (+Z) towards the user/camera.
-// Agents sit at their desks facing North (rotY = 0) looking at their screens.
+// Each pod sits at (pod.x, 0, pod.z) and the agent's seat is SW + DESK/SEAT
+// contract in OfficeRoom.tsx: seat world pos = (pod.x, 0, pod.z + SEAT_LOCAL_Z).
+// rotY is interpreted as: 0 => model front faces +Z, PI => -Z, PI/2 => +X, -PI/2 => -X.
+// IMPORTANT: inside a pod the desk sits at local z = 0 while the chair (and the
+// seated agent) sits at local z = SEAT_LOCAL_Z = +0.95, so the monitors -- which
+// face +Z "towards the user" -- are actually BEHIND the seat at -Z. To look AT
+// the workstation the model must therefore face -Z, i.e. rotY = PI. (rotY = 0
+// would put the agent's back to the desk, which reads as a backwards figure.)
 export const AGENT_CONFIGS: Record<string, { position: [number, number, number]; rotationY: number }> = {
-  // Arka (Lead) - Executive Suite (center-back)
-  'lead-engineer':   { position: [ 0.0, 0, -4.0], rotationY: 0 },
+  // Arka (Lead) - Executive Suite desk at [0, 0, -4.8], chair at z -3.85
+  'lead-engineer':   { position: [ 0.0, 0, -3.85], rotationY: Math.PI },
 
-  // Left Column (X = -4.5)
-  'ui-ux-designer':  { position: [-4.5, 0, -2.0], rotationY: 0 },
-  'frontend-dev':    { position: [-4.5, 0,  0.6], rotationY: 0 },
-  'backend-dev':     { position: [-4.5, 0,  3.2], rotationY: 0 },
+  // Left Column (X = -4.5) - pods at z -2.6 / 0.4 / 3.4
+  'ui-ux-designer':  { position: [-4.5, 0, -1.65], rotationY: Math.PI },
+  'frontend-dev':    { position: [-4.5, 0,  1.35], rotationY: Math.PI },
+  'backend-dev':     { position: [-4.5, 0,  4.35], rotationY: Math.PI },
 
   // Right Column (X = +1.8)
-  'qa-tester':       { position: [ 1.8, 0, -2.0], rotationY: 0 },
-  'debugger':        { position: [ 1.8, 0,  0.6], rotationY: 0 },
-  'product-manager': { position: [ 1.8, 0,  3.2], rotationY: 0 },
+  'qa-tester':       { position: [ 1.8, 0, -1.65], rotationY: Math.PI },
+  'debugger':        { position: [ 1.8, 0,  1.35], rotationY: Math.PI },
+  'product-manager': { position: [ 1.8, 0,  4.35], rotationY: Math.PI },
 
   // Far Right Workstations (X = +4.0)
-  'researcher':      { position: [ 4.0, 0, -2.0], rotationY: 0 },
-  'writer-docs':     { position: [ 4.0, 0,  0.6], rotationY: 0 },
+  'researcher':      { position: [ 4.0, 0, -1.65], rotationY: Math.PI },
+  'writer-docs':     { position: [ 4.0, 0,  1.35], rotationY: Math.PI },
 };
 
 export const AGENT_POSITIONS: Record<string, [number, number, number]> = {
@@ -59,8 +65,10 @@ export function Scene3D() {
   return (
     <div className="scene3d-container">
       <Canvas shadows={!settings.performanceMode} dpr={settings.performanceMode ? 1 : [1, 2]}>
-        {/* True Isometric camera matching the reference screenshot */}
-        <PerspectiveCamera makeDefault position={[16.5, 17.0, 16.5]} fov={36} />
+        {/* True Isometric camera matching the reference screenshot. Pulled back
+            and shifted east so the whole footprint fits: the office now spans
+            x -11.5 .. 22.5 (the Ruang Santai wing is east of the work room). */}
+        <PerspectiveCamera makeDefault position={[22.0, 20.0, 20.0]} fov={38} />
         
         <color attach="background" args={[bgColor]} />
         
@@ -127,10 +135,10 @@ export function Scene3D() {
           enableDamping
           dampingFactor={0.06}
           minDistance={8}
-          maxDistance={36}
+          maxDistance={48}
           maxPolarAngle={Math.PI / 2.15}
           minPolarAngle={0.2}
-          target={[0, 1.0, 0]}
+          target={[4, 1.0, -2]}
         />
       </Canvas>
     </div>

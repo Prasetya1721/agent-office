@@ -10,6 +10,7 @@ import type {
   AppSettings,
   AgentStatus,
   TaskStatus,
+  RoomZone,
   ProviderConfig,
   UsageLog,
   CollaborationState,
@@ -18,6 +19,21 @@ import type {
   LiveActivity,
 } from '../types';
 import { DEFAULT_AGENTS, PROVIDER_DEFAULTS } from '../config/agents';
+
+/**
+ * Where an agent belongs given its status. This is what makes the Ruang Santai
+ * (Zone 4, lounge + pool) an actual destination rather than decoration: an idle
+ * agent drifts there, and any agent that starts working walks back to its desk.
+ *
+ * A deliberate 'break' or 'meeting' assignment is a standing choice (seeded, or
+ * set by the user), so those zones are left alone for every status except an
+ * explicit return to work -- only a working agent is pulled back to 'work'.
+ */
+function zoneForStatus(status: AgentStatus, current?: RoomZone): RoomZone {
+  if (status === 'working' || status === 'thinking') return 'work';
+  if (status === 'idle') return current === 'meeting' || current === 'break' ? current : 'lounge';
+  return current ?? 'work';
+}
 
 interface AppState {
   // Agents
@@ -107,7 +123,9 @@ export const useAppStore = create<AppState>((set) => ({
   updateAgentStatus: (id, status) =>
     set((state) => ({
       agents: state.agents.map((a) =>
-        a.id === id ? { ...a, status } : a
+        a.id === id
+          ? { ...a, status, roomZone: zoneForStatus(status, a.roomZone) }
+          : a
       ),
     })),
   updateAgent: (id, updates) =>
@@ -129,7 +147,7 @@ export const useAppStore = create<AppState>((set) => ({
       agents: state.agents.map((a) => {
         if (a.id !== id) return a;
         const newStatus: AgentStatus = a.status === 'working' ? 'idle' : 'working';
-        return { ...a, status: newStatus };
+        return { ...a, status: newStatus, roomZone: zoneForStatus(newStatus, a.roomZone) };
       }),
     })),
   assignSkill: (agentId, skillId) =>
@@ -562,3 +580,59 @@ export const useAppStore = create<AppState>((set) => ({
   focusPosition: null,
   setFocusPosition: (pos) => set({ focusPosition: pos }),
 }));
+
+// ============================================
+// Persistence — credentials + user preferences ONLY
+// ============================================
+
+/**
+ * `providers` holds the BYOK API key. Without persistence it lives in memory
+ * only, so every Vite hot-reload or page refresh silently resets it to '' and
+ * the app reports "API key belum diisi" again — which is exactly the bug this
+ * replaces.
+ *
+ * Deliberately NOT persisted: agents, messages, tasks, artifacts, activities,
+ * backlog, collaboration. Those are seeded demo content — they must reset to a
+ * reproducible state on reload so the app never boots into stale conversation
+ * history or stale KPI totals.
+ *
+ * Storage note: this app calls LLM APIs directly from the browser, so the key is
+ * only ever as protected as the origin it runs on. A VITE_* env var would be
+ * inlined into the shipped bundle by Vite and end up equally readable, so
+ * localStorage is not the weaker option here.
+ */
+const STORAGE_KEY = 'agent-office-prefs';
+
+type PersistedPrefs = Pick<AppState, 'providers' | 'settings'>;
+
+function loadPrefs(): Partial<PersistedPrefs> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Partial<PersistedPrefs>) : {};
+  } catch {
+    // Corrupt or unreadable storage must not stop the app from booting.
+    return {};
+  }
+}
+
+// Hydrate before first render so no component ever sees an empty apiKey.
+const initialPrefs = loadPrefs();
+if (initialPrefs.providers) {
+  useAppStore.setState({ providers: initialPrefs.providers });
+}
+if (initialPrefs.settings) {
+  useAppStore.setState({ settings: initialPrefs.settings });
+}
+
+useAppStore.subscribe((state) => {
+  try {
+    const prefs: PersistedPrefs = {
+      providers: state.providers,
+      settings: state.settings,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // Quota exceeded or private-mode storage disabled — non-fatal, the session
+    // keeps working, the key just will not survive a reload.
+  }
+});

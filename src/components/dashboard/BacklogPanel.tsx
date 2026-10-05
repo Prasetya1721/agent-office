@@ -5,7 +5,7 @@
 // Backlog view: Deadline dekat, Menunggu owner, Ide / nanti
 // Chat view: Multi-Agent collaborative messaging
 // ============================================
-import { useState } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { runCollaborativeSprint } from '../../services/agentOrchestrator';
 import type { Message } from '../../types';
@@ -34,7 +34,7 @@ export function BacklogPanel() {
     return (m.agentId === activeChatTab || m.targetAgentId === activeChatTab) && m.channel !== 'team';
   });
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
     const text = chatInput.trim();
@@ -153,27 +153,25 @@ export function BacklogPanel() {
       {/* TAB 2: CHAT VIEW */}
       {rightPanelTab === 'chat' && (
         <div className="chat-tab-content">
-          {/* Channel Selector */}
-          <div className="chat-channel-pills">
-            <button
-              className={`chat-pill ${activeChatTab === 'team' ? 'active' : ''}`}
-              onClick={() => setActiveChatTab('team')}
+          {/* Channel Selector — a select instead of 10 pills (Tim Sprint + 9
+              agents). shortTag alone was also ambiguous; show name + role. */}
+          <div className="chat-channel-row">
+            <label className="chat-channel-label" htmlFor="chat-channel-select">
+              Kirim ke
+            </label>
+            <select
+              id="chat-channel-select"
+              className="chat-channel-select"
+              value={activeChatTab}
+              onChange={(e) => setActiveChatTab(e.target.value)}
             >
-              👥 Tim Sprint
-            </button>
-            {agents.map((a) => (
-              <button
-                key={`chat-pill-${a.id}`}
-                className={`chat-pill ${activeChatTab === a.id ? 'active' : ''}`}
-                onClick={() => setActiveChatTab(a.id)}
-                style={{
-                  borderColor: activeChatTab === a.id ? a.color : undefined,
-                  color: activeChatTab === a.id ? a.color : undefined,
-                }}
-              >
-                {a.shortTag}
-              </button>
-            ))}
+              <option value="team">👥 Tim Sprint (semua agen)</option>
+              {agents.map((a) => (
+                <option key={`chat-pill-${a.id}`} value={a.id}>
+                  {a.name} — {a.role}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Collaboration active indicator */}

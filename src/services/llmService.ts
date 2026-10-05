@@ -5,6 +5,20 @@ import type { Agent, Message, ProviderConfig } from '../types';
 import { useAppStore } from '../store/useAppStore';
 
 /**
+ * Whether a provider config has everything it needs to serve a request.
+ *
+ * Built-in cloud providers (Anthropic / Google / OpenAI) require a key. Custom
+ * OpenAI-compatible endpoints are usually LOCAL servers (Ollama, LM Studio,
+ * vLLM) that are legitimately keyless — SettingsPanel marks their key
+ * "Optional" for that reason — so they must not be blocked by a key check.
+ */
+export function isProviderUsable(provider: ProviderConfig | undefined): boolean {
+  if (!provider) return false;
+  if (provider.provider === 'custom-openai') return true;
+  return provider.apiKey.trim() !== '';
+}
+
+/**
  * Send message to agent's LLM provider with streaming
  */
 export async function sendMessageToAgent(
@@ -24,8 +38,12 @@ export async function sendMessageToAgent(
     throw new Error(`Provider "${agent.modelConfig.provider}" tidak ditemukan. Atur di Settings.`);
   }
 
-  if (!providerConfig.apiKey) {
-    throw new Error(`API key untuk "${providerConfig.name}" belum diisi. Buka Settings > LLM Providers.`);
+  if (!isProviderUsable(providerConfig)) {
+    throw new Error(
+      `API key untuk "${providerConfig.name}" belum diisi. ` +
+        `Buka Settings > tab "Providers" lalu isi API Key, atau tambahkan ` +
+        `endpoint lokal (Ollama/LM Studio) lewat "Add Custom Endpoint".`
+    );
   }
 
   // Build messages

@@ -5,6 +5,7 @@
 // ============================================
 import { useState, useEffect } from 'react';
 import { TopHeader } from './components/layout/TopHeader';
+import { Sidebar } from './components/layout/Sidebar';
 import { LiveActivityPanel } from './components/dashboard/LiveActivityPanel';
 import { BacklogPanel } from './components/dashboard/BacklogPanel';
 import { AgentCardsBar } from './components/dashboard/AgentCardsBar';
@@ -55,33 +56,44 @@ export function App() {
 
   return (
     <div className={`app-root ${settings.theme} ${skillModalAgentId ? 'modal-active' : ''}`}>
-      {/* 1. TOP HEADER (Brand, View Toggles, KPI Cards) */}
-      <TopHeader onResetCamera={handleResetCamera} />
+      {/* 0. LEFT NAV RAIL — the only entry point to tasks / artifacts / usage.
+          This component existed but was never rendered, so 3 of the 5 RightPanel
+          views had no way to be opened at all. */}
+      <Sidebar />
 
-      {/* 2. MAIN WORKSPACE GRID: Left Activity + Center 3D + Right Backlog */}
-      <div className="main-workspace-grid">
-        {/* Left Live Activity Stream */}
-        <LiveActivityPanel onSelectAgent={handleSelectAgent} />
+      <div className="app-main-column">
+        {/* 1. TOP HEADER (Brand, View Toggles, KPI Cards) */}
+        <TopHeader onResetCamera={handleResetCamera} />
 
-        {/* Center 3D Office HQ Viewport */}
-        <main className="viewport-3d-wrapper">
-          <Scene3D />
+        {/* 2. MAIN WORKSPACE GRID: Left Activity + Center 3D + Right Backlog */}
+        <div className="main-workspace-grid">
+          {/* Left Live Activity Stream */}
+          <LiveActivityPanel onSelectAgent={handleSelectAgent} />
 
-          {/* Navigation Hint matching Screenshot */}
-          <div className="scene-interaction-hint">
-            scroll = zoom &bull; shift + drag = geser &bull; drag/orbit = putar &bull; klik agen = fokus & chat
-          </div>
-        </main>
+          {/* Center 3D Office HQ Viewport */}
+          <main className="viewport-3d-wrapper">
+            <Scene3D />
 
-        {/* Right Backlog & Chat Panel */}
-        <BacklogPanel />
+            {/* Navigation Hint — collapsed to a "?" chip, expands on hover /
+                focus. It used to be a permanent text pill over the 3D view. */}
+            <div className="scene-interaction-hint" tabIndex={0} aria-label="Petunjuk navigasi 3D">
+              <span className="scene-hint-q">?</span>
+              <span className="scene-hint-text">
+                scroll = zoom &bull; shift + drag = geser &bull; drag/orbit = putar &bull; klik agen = fokus &amp; chat
+              </span>
+            </div>
+          </main>
+
+          {/* Right Backlog & Chat Panel */}
+          <BacklogPanel />
+        </div>
+
+        {/* 3. BOTTOM AGENT CARDS BAR (6 Horizontal Cards with Skills) */}
+        <AgentCardsBar
+          onSelectAgent={handleSelectAgent}
+          onOpenSkillModal={(id) => setSkillModalAgentId(id)}
+        />
       </div>
-
-      {/* 3. BOTTOM AGENT CARDS BAR (6 Horizontal Cards with Skills) */}
-      <AgentCardsBar
-        onSelectAgent={handleSelectAgent}
-        onOpenSkillModal={(id) => setSkillModalAgentId(id)}
-      />
 
       {/* 4. SKILL INSPECTOR MODAL */}
       {skillModalAgentId && (

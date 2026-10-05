@@ -1,0 +1,600 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset=utf8>
+  <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <style>
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+  </style>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --md-bg: #fff;
+      --md-text: rgba(0, 0, 0, .8);
+      --md-muted: rgba(0, 0, 0, .6);
+      --md-fill: rgba(0, 0, 0, .04);
+      --md-fill-strong: rgba(0, 0, 0, .06);
+      --md-rule: rgba(0, 0, 0, .1);
+      --md-rule-strong: rgba(0, 0, 0, .16);
+      --md-link: hsl(210 100% 45%)
+    }
+
+    @media (prefers-color-scheme:dark) {
+      :root:where(:not([data-theme="light"])) {
+        --md-bg: #0d0d0d;
+        --md-text: rgba(255, 255, 255, .85);
+        --md-muted: rgba(255, 255, 255, .6);
+        --md-fill: rgba(255, 255, 255, .06);
+        --md-fill-strong: rgba(255, 255, 255, .09);
+        --md-rule: rgba(255, 255, 255, .14);
+        --md-rule-strong: rgba(255, 255, 255, .22);
+        --md-link: hsl(210 100% 72%)
+      }
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --md-bg: #0d0d0d;
+      --md-text: rgba(255, 255, 255, .85);
+      --md-muted: rgba(255, 255, 255, .6);
+      --md-fill: rgba(255, 255, 255, .06);
+      --md-fill-strong: rgba(255, 255, 255, .09);
+      --md-rule: rgba(255, 255, 255, .14);
+      --md-rule-strong: rgba(255, 255, 255, .22);
+      --md-link: hsl(210 100% 72%)
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light
+    }
+
+    @media print {
+
+      :root,
+      :root[data-theme="dark"] {
+        color-scheme: light;
+        --md-bg: #fff;
+        --md-text: rgba(0, 0, 0, .8);
+        --md-muted: rgba(0, 0, 0, .6);
+        --md-fill: rgba(0, 0, 0, .04);
+        --md-fill-strong: rgba(0, 0, 0, .06);
+        --md-rule: rgba(0, 0, 0, .1);
+        --md-rule-strong: rgba(0, 0, 0, .16);
+        --md-link: hsl(210 100% 45%)
+      }
+    }
+
+    body {
+      background: var(--md-bg);
+      color: var(--md-text);
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', sans-serif;
+      overflow-wrap: break-word
+    }
+
+    body>:first-child {
+      margin-top: 0
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 6px 0 0;
+      line-height: 1.25;
+      font-weight: 600;
+      text-wrap: balance
+    }
+
+    h1 {
+      font-size: 1.35em
+    }
+
+    h2 {
+      font-size: 1.15em;
+      color: var(--md-muted)
+    }
+
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 1em
+    }
+
+    p,
+    ul,
+    ol,
+    blockquote,
+    table,
+    pre,
+    hr {
+      margin: 0
+    }
+
+    strong {
+      font-weight: 600
+    }
+
+    a {
+      color: var(--md-link);
+      text-decoration: none
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+
+    ul,
+    ol {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 22px
+    }
+
+    ul {
+      list-style: disc
+    }
+
+    ol {
+      list-style: decimal
+    }
+
+    :is(li, td, th)>*+:is(p, ul, ol, blockquote) {
+      margin-top: 6px
+    }
+
+    blockquote {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-left: 2px solid var(--md-rule);
+      padding-left: 10px;
+      color: var(--md-muted)
+    }
+
+    :not(pre)>code {
+      background: var(--md-fill);
+      padding: 1px 3px;
+      border-radius: 4px;
+      font: .92em 'SF Mono', ui-monospace, Menlo, Consolas, monospace
+    }
+
+    a>code {
+      background: none;
+      color: inherit
+    }
+
+    pre {
+      background: var(--md-fill);
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font: 12px/1.5 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+      margin-block: 4px
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font: inherit
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 2px;
+      font: inherit
+    }
+
+    th,
+    td {
+      padding: 6px 8px;
+      border-radius: 3px;
+      text-align: left;
+      vertical-align: top
+    }
+
+    th {
+      background: var(--md-fill-strong);
+      font-weight: 600
+    }
+
+    td {
+      background: var(--md-fill)
+    }
+
+    :is(th, td) :not(pre)>code {
+      background: transparent
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid var(--md-rule-strong);
+      margin-block: 10px
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px
+    }
+  </style>
+</head>
+
+<body>
+  <h1>PRD: Kantor Digital 3D Multi-Agent (&quot;AgentOffice&quot;)</h1>
+  <p><strong>Versi:</strong> 1.0 (Draft) | <strong>Tanggal:</strong> 4 Oktober 2026</p>
+  <hr>
+  <h2>1. Ringkasan</h2>
+  <p>AgentOffice adalah aplikasi web berupa <strong>kantor virtual 3D</strong> tempat pengguna &quot;bekerja&quot;
+    bersama tim agent AI. Setiap agent punya peran (Lead Engineer, UI/UX, Debugger, dll), skill sendiri, dan
+    <strong>otak LLM yang bisa dipilih per agent</strong> (Claude, Gemini, GPT, atau API custom yang kompatibel OpenAI).
+    Pengguna memberi tugas, agent berkolaborasi, dan progres terlihat lewat animasi 3D di ruangan kantor.</p>
+  <h2>2. Latar Belakang &amp; Masalah</h2>
+  <ul>
+    <li>Pengguna harus berpindah-pindah tool AI untuk tugas berbeda (coding, desain, debugging, riset).</li>
+    <li>Chat biasa tidak memperlihatkan siapa mengerjakan apa dan sampai mana.</li>
+    <li>Setiap penyedia LLM punya kekuatan berbeda, tapi sulit dipakai bersamaan dalam satu alur kerja.</li>
+    <li>Interaksi AI terasa membosankan; visualisasi kantor membuat kerja multi-agent lebih mudah dipahami dan
+      menyenangkan.</li>
+  </ul>
+  <h2>3. Tujuan &amp; Non-Tujuan</h2>
+  <p><strong>Tujuan</strong></p>
+  <ol>
+    <li>Satu tempat untuk mendelegasikan tugas ke banyak agent spesialis.</li>
+    <li>Tiap agent dapat dikonfigurasi: peran, skill, prompt, tools, dan model LLM.</li>
+    <li>Mendukung multi-provider + custom endpoint OpenAI-compatible.</li>
+    <li>Visualisasi 3D real-time status kerja agent.</li>
+    <li>Meningkatkan produktivitas: waktu dari ide ke hasil lebih singkat.</li>
+  </ol>
+  <p><strong>Non-Tujuan (v1)</strong></p>
+  <ul>
+    <li>Game/simulasi kantor yang kompleks (ekonomi, level, dll).</li>
+    <li>Voice call real-time antar agent.</li>
+    <li>Marketplace publik agent (masuk roadmap).</li>
+  </ul>
+  <h2>4. Target Pengguna</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Persona</th>
+        <th>Kebutuhan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Developer/AI engineer solo</td>
+        <td>Tim virtual: lead, UI/UX, debugger, reviewer</td>
+      </tr>
+      <tr>
+        <td>Founder/produk</td>
+        <td>Mengubah ide jadi PRD, desain, dan kode</td>
+      </tr>
+      <tr>
+        <td>Tim kecil</td>
+        <td>Workspace bersama dengan agent bersama</td>
+      </tr>
+      <tr>
+        <td>Power user</td>
+        <td>Pakai model/API sendiri (self-host, proxy, OpenRouter, dll)</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>5. Daftar Agent Bawaan</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Tugas Utama</th>
+        <th>Skill/Tools Contoh</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Lead Engineer</strong></td>
+        <td>Memecah tugas, arsitektur, review, mendelegasikan ke agent lain</td>
+        <td>Task planning, code review, arsitektur</td>
+      </tr>
+      <tr>
+        <td><strong>UI/UX Designer</strong></td>
+        <td>Wireframe, design system, review aksesibilitas</td>
+        <td>Generate layout, palet, komponen</td>
+      </tr>
+      <tr>
+        <td><strong>Frontend Dev</strong></td>
+        <td>Implementasi UI</td>
+        <td>React/HTML/CSS, sandbox preview</td>
+      </tr>
+      <tr>
+        <td><strong>Backend Dev</strong></td>
+        <td>API, database, integrasi</td>
+        <td>REST/SQL, schema design</td>
+      </tr>
+      <tr>
+        <td><strong>Debugger</strong></td>
+        <td>Analisis error, reproduksi bug, saran fix</td>
+        <td>Baca log, stack trace, run code</td>
+      </tr>
+      <tr>
+        <td><strong>QA/Tester</strong></td>
+        <td>Skenario &amp; unit test</td>
+        <td>Test generation, checklist</td>
+      </tr>
+      <tr>
+        <td><strong>Product Manager</strong></td>
+        <td>PRD, user story, prioritas</td>
+        <td>Template PRD, backlog</td>
+      </tr>
+      <tr>
+        <td><strong>Researcher</strong></td>
+        <td>Riset web &amp; ringkasan</td>
+        <td>Web search, summarization</td>
+      </tr>
+      <tr>
+        <td><strong>Writer/Docs</strong></td>
+        <td>Dokumentasi, README, konten</td>
+        <td>Markdown, tone control</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Pengguna dapat <strong>membuat agent custom</strong> (lihat 6.3).</p>
+  <h2>6. Fitur &amp; Kebutuhan Fungsional</h2>
+  <h3>6.1 Kantor 3D</h3>
+  <ul>
+    <li>Ruangan 3D (Three.js / React Three Fiber) dengan meja per agent, ruang meeting, papan tugas.</li>
+    <li>Avatar agent beranimasi berdasarkan status: <strong>idle, thinking, typing/coding, berdiskusi, selesai,
+        error</strong>.</li>
+    <li>Klik agent → buka panel chat &amp; detail tugas.</li>
+    <li>Indikator di atas kepala agent (bubble status, progress).</li>
+    <li>Kamera: orbit, fokus otomatis ke agent yang sedang aktif, toggle mode 2D ringan.</li>
+    <li>Tema ruangan dapat diganti (modern, loft, ruang kapal, dll).</li>
+    <li><strong>Mode performa rendah</strong> untuk perangkat lemah (kualitas grafis, matikan animasi).</li>
+  </ul>
+  <h3>6.2 Manajemen Tugas &amp; Kolaborasi</h3>
+  <ul>
+    <li>Pengguna membuat tugas lewat chat ke Lead Engineer atau langsung ke agent tertentu.</li>
+    <li>Lead Engineer menghasilkan rencana → membagi subtugas → agent mengerjakan paralel/berurutan.</li>
+    <li><strong>Papan tugas</strong> (To Do, In Progress, Review, Done) sinkron dengan animasi.</li>
+    <li>Agent dapat saling mengirim pesan &amp; handoff hasil (terlihat di ruang meeting 3D).</li>
+    <li>Approval gate: pengguna menyetujui langkah penting (menjalankan kode, mengubah file, memanggil tool berbiaya).
+    </li>
+    <li>Riwayat tugas, log aktivitas, dan hasil (artifact: kode, dokumen, desain).</li>
+  </ul>
+  <h3>6.3 Konfigurasi Agent</h3>
+  <p>Setiap agent memiliki:</p>
+  <ul>
+    <li>Nama, avatar 3D, peran, deskripsi.</li>
+    <li><strong>System prompt</strong> dan gaya kerja.</li>
+    <li><strong>Skill</strong> (modul yang dapat dipasang/dilepas): kumpulan instruksi + tools, format
+      <code>skill.md</code>.</li>
+    <li><strong>Tools</strong> yang diizinkan (web search, code runner, baca/tulis file, GitHub, dll).</li>
+    <li><strong>Otak (Model)</strong>: provider + model + parameter (temperature, max tokens).</li>
+    <li>Memori: ringkasan percakapan &amp; knowledge per agent (opsional).</li>
+    <li>Template agent dapat diduplikasi, diekspor, dan diimpor (JSON).</li>
+  </ul>
+  <h3>6.4 Multi-Provider LLM (&quot;Brain Router&quot;)</h3>
+  <ul>
+    <li>Provider bawaan: <strong>Anthropic (Claude), Google (Gemini), OpenAI (GPT)</strong>, dan lainnya (OpenRouter,
+      Groq, dll).</li>
+    <li><strong>Custom API OpenAI-compatible</strong>: pengguna mengisi <code>Base URL</code>, <code>API Key</code>,
+      <code>Model name</code>, header tambahan opsional (cocok untuk Ollama, LM Studio, vLLM, LiteLLM, proxy sendiri).
+    </li>
+    <li>Tombol <strong>Test Connection</strong> dan validasi model.</li>
+    <li>Fallback otomatis: jika model utama gagal/limit, pakai model cadangan.</li>
+    <li>Rekomendasi model per peran (mis. reasoning kuat untuk Lead Engineer, model cepat untuk Researcher).</li>
+    <li>Adapter layer: satu antarmuka internal (chat, streaming, tool calling, vision) yang dipetakan ke tiap provider.
+    </li>
+    <li>Pelacakan penggunaan token &amp; estimasi biaya per agent/tugas.</li>
+  </ul>
+  <h3>6.5 Akun &amp; Workspace</h3>
+  <ul>
+    <li>Registrasi/login (email, Google/GitHub).</li>
+    <li>Banyak workspace/proyek; undang anggota (peran: owner, editor, viewer) — fase 2.</li>
+    <li><strong>API key disimpan terenkripsi</strong> (server-side, atau mode BYOK lokal di browser).</li>
+  </ul>
+  <h3>6.6 Artifact &amp; Ekspor</h3>
+  <ul>
+    <li>Hasil agent tersimpan sebagai artifact: kode, markdown, diagram, file.</li>
+    <li>Ekspor ke ZIP, Markdown, atau push ke GitHub.</li>
+    <li>Preview langsung untuk output web (iframe sandbox).</li>
+  </ul>
+  <h2>7. Alur Pengguna Utama</h2>
+  <ol>
+    <li>Pengguna masuk → memilih/membuat workspace → memasuki kantor 3D.</li>
+    <li>Menambah/mengatur agent dan memilih otak tiap agent (atau mengisi custom API).</li>
+    <li>Mengetik tugas ke Lead Engineer: <em>&quot;Buatkan aplikasi todo dengan login.&quot;</em></li>
+    <li>Lead Engineer membuat rencana, pengguna menyetujui.</li>
+    <li>Subtugas didistribusikan: UI/UX membuat desain → Frontend/Backend mengimplementasi → Debugger &amp; QA
+      memeriksa.</li>
+    <li>Animasi menunjukkan siapa bekerja; papan tugas ikut ter-update.</li>
+    <li>Pengguna mereview hasil, minta revisi, lalu ekspor.</li>
+  </ol>
+  <h2>8. Kebutuhan Non-Fungsional</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspek</th>
+        <th>Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Performa 3D</td>
+        <td>≥ 30 FPS di laptop menengah; mode hemat untuk perangkat lemah</td>
+      </tr>
+      <tr>
+        <td>Latensi UI</td>
+        <td>Respons klik &lt; 200 ms; streaming token ke UI</td>
+      </tr>
+      <tr>
+        <td>Keamanan</td>
+        <td>Enkripsi API key, sandbox untuk eksekusi kode, rate limit</td>
+      </tr>
+      <tr>
+        <td>Privasi</td>
+        <td>Data pengguna tidak dipakai untuk melatih model; opsi hapus data</td>
+      </tr>
+      <tr>
+        <td>Skalabilitas</td>
+        <td>Min. 10 agent aktif per workspace</td>
+      </tr>
+      <tr>
+        <td>Keandalan</td>
+        <td>Retry + fallback model; tugas dapat dilanjutkan setelah gagal</td>
+      </tr>
+      <tr>
+        <td>Aksesibilitas</td>
+        <td>Mode 2D/teks, navigasi keyboard, kontras memadai</td>
+      </tr>
+      <tr>
+        <td>Responsif</td>
+        <td>Desktop utama; mobile tampilan ringkas (list agent + chat)</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>9. Arsitektur Teknis (Usulan)</h2>
+  <ul>
+    <li><strong>Frontend:</strong> React + TypeScript, React Three Fiber/Three.js, Zustand, Tailwind.</li>
+    <li><strong>Backend:</strong> Node.js (NestJS/Fastify) atau Python (FastAPI); WebSocket/SSE untuk streaming.</li>
+    <li><strong>Orkestrasi agent:</strong> event-driven task queue (mis. BullMQ), state machine per agent.</li>
+    <li><strong>LLM gateway:</strong> adapter per provider + adapter OpenAI-compatible generik.</li>
+    <li><strong>Database:</strong> PostgreSQL (data), Redis (antrian/state), object storage (artifact), pgvector (memori
+      opsional).</li>
+    <li><strong>Eksekusi kode:</strong> container sandbox terisolasi (mis. Docker/Firecracker), dengan batas waktu &amp;
+      resource.</li>
+    <li><strong>Aset 3D:</strong> glTF/GLB, animasi via skeletal animation; lazy loading.</li>
+  </ul>
+  <h2>10. Model Data Ringkas</h2>
+  <ul>
+    <li><code>User</code>, <code>Workspace</code>, <code>Member</code></li>
+    <li><code>Agent</code> (role, system_prompt, model_config_id, skills[], tools[], avatar)</li>
+    <li><code>ModelConfig</code> (provider, base_url, api_key_ref, model, params, fallback_id)</li>
+    <li><code>Skill</code> (nama, instruksi, tools, versi)</li>
+    <li><code>Task</code> (judul, status, parent_id, assigned_agent, hasil)</li>
+    <li><code>Message</code> (agent/user, konten, task_id)</li>
+    <li><code>Artifact</code> (tipe, isi/URL, versi)</li>
+    <li><code>UsageLog</code> (agent, model, token_in/out, biaya)</li>
+  </ul>
+  <h2>11. Metrik Keberhasilan</h2>
+  <ul>
+    <li>Aktivasi: ≥ 60% pengguna baru menyelesaikan 1 tugas multi-agent di sesi pertama.</li>
+    <li>Retensi minggu ke-4 ≥ 25%.</li>
+    <li>Rata-rata ≥ 3 agent aktif per workspace.</li>
+    <li>≥ 30% pengguna mengonfigurasi lebih dari satu provider/custom API.</li>
+    <li>Tingkat keberhasilan tugas (diterima pengguna tanpa revisi besar) ≥ 70%.</li>
+  </ul>
+  <h2>12. Roadmap</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Cakupan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>MVP (6–8 minggu)</strong></td>
+        <td>Kantor 3D dasar (1 ruangan), 4 agent (Lead, UI/UX, Dev, Debugger), chat + papan tugas, provider
+          Claude/Gemini/GPT + custom OpenAI-compatible, BYOK</td>
+      </tr>
+      <tr>
+        <td><strong>v1.1</strong></td>
+        <td>Agent lengkap, skill.md, approval gate, artifact &amp; ekspor, fallback model, usage tracking</td>
+      </tr>
+      <tr>
+        <td><strong>v1.2</strong></td>
+        <td>Kolaborasi tim, integrasi GitHub, memori agent, tema ruangan</td>
+      </tr>
+      <tr>
+        <td><strong>v2.0</strong></td>
+        <td>Marketplace agent/skill, voice, MCP/tools eksternal, self-host</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>13. Risiko &amp; Mitigasi</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Risiko</th>
+        <th>Mitigasi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Biaya token membengkak</td>
+        <td>Batas anggaran per tugas, estimasi biaya, model murah untuk tugas ringan</td>
+      </tr>
+      <tr>
+        <td>Agent saling loop/berbicara tak berujung</td>
+        <td>Batas iterasi, timeout, kontrol Lead Engineer</td>
+      </tr>
+      <tr>
+        <td>Kebocoran API key</td>
+        <td>Enkripsi, tidak ditampilkan ulang, mode BYOK lokal</td>
+      </tr>
+      <tr>
+        <td>Eksekusi kode berbahaya</td>
+        <td>Sandbox terisolasi, approval pengguna</td>
+      </tr>
+      <tr>
+        <td>3D berat di perangkat lemah</td>
+        <td>Mode 2D/hemat, optimasi aset, LOD</td>
+      </tr>
+      <tr>
+        <td>Inkonsistensi antar provider (tool calling, format)</td>
+        <td>Adapter layer + test kompatibilitas per provider</td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>14. Pertanyaan Terbuka</h2>
+  <ol>
+    <li>Platform awal: web saja, atau juga desktop (Electron/Tauri)?</li>
+    <li>Model bisnis: gratis + BYOK, langganan, atau kredit?</li>
+    <li>Apakah agent boleh bekerja otomatis tanpa approval (mode autopilot)?</li>
+    <li>Gaya visual 3D: low-poly, stylized, atau realistis?</li>
+    <li>Perlukah dukungan bahasa Indonesia penuh di UI dan prompt bawaan agent?</li>
+  </ol>
+  <hr>
+  <h2>Lampiran A: Contoh Konfigurasi Custom API (OpenAI-compatible)</h2>
+  <pre><code class="language-json">{
+  &#34;provider&#34;: &#34;custom-openai&#34;,
+  &#34;base_url&#34;: &#34;https://api.contoh-saya.com/v1&#34;,
+  &#34;api_key&#34;: &#34;••••••••&#34;,
+  &#34;model&#34;: &#34;nama-model-saya&#34;,
+  &#34;temperature&#34;: 0.3,
+  &#34;max_tokens&#34;: 4096,
+  &#34;extra_headers&#34;: { &#34;X-Org&#34;: &#34;tim-saya&#34; }
+}
+</code></pre>
+  <h2>Lampiran B: Contoh Definisi Agent</h2>
+  <pre><code class="language-json">{
+  &#34;name&#34;: &#34;Debugger&#34;,
+  &#34;role&#34;: &#34;Menganalisis error dan memperbaiki bug&#34;,
+  &#34;model&#34;: { &#34;provider&#34;: &#34;anthropic&#34;, &#34;model&#34;: &#34;pilih-di-ui&#34;, &#34;fallback&#34;: &#34;custom-openai&#34; },
+  &#34;skills&#34;: [&#34;log-analysis&#34;, &#34;root-cause&#34;, &#34;fix-suggestion&#34;],
+  &#34;tools&#34;: [&#34;code_runner&#34;, &#34;file_read&#34;, &#34;web_search&#34;],
+  &#34;system_prompt&#34;: &#34;Kamu adalah debugger senior. Reproduksi masalah, cari akar penyebab, usulkan perbaikan minimal.&#34;
+}
+</code></pre>
+
+</body>
+
+</html>

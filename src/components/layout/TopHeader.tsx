@@ -16,8 +16,12 @@ export function TopHeader({ onResetCamera }: TopHeaderProps) {
   const settings = useAppStore((s) => s.settings);
   const updateSettings = useAppStore((s) => s.updateSettings);
   const agents = useAppStore((s) => s.agents);
-  const setActivePanel = useAppStore((s) => s.setActivePanel);
-  const setPanelOpen = useAppStore((s) => s.setPanelOpen);
+  const usageLogs = useAppStore((s) => s.usageLogs);
+  const collaboration = useAppStore((s) => s.collaboration);
+
+  // Secondary view controls (theme / camera / fullscreen) are set-once, so they
+  // live behind a disclosure instead of occupying the header permanently.
+  const [showViewMenu, setShowViewMenu] = useState(false);
 
   // Live real-time clock matching "15.03.52" in screenshot
   const [timeStr, setTimeStr] = useState('15.03.52');
@@ -47,6 +51,29 @@ export function TopHeader({ onResetCamera }: TopHeaderProps) {
   const activeAgentsCount = agents.filter(
     (a) => a.status === 'working' || a.status === 'thinking' || a.status === 'discussing'
   ).length;
+  // Every KPI below is derived from the store. The previous set was six
+  // hardcoded literals ("778rb", "378rb", "21.00", "602", "1.2G free",
+  // "Active Sprint #03") that never changed, plus a `{count || 6}/6` that
+  // reported a fully staffed office when zero agents were active — `||`
+  // treats 0 as falsy, so the idle state read as 6/6.
+  const tokensOut = usageLogs.reduce((sum, log) => sum + log.tokensOut, 0);
+  const totalCost = usageLogs.reduce((sum, log) => sum + log.estimatedCost, 0);
+  const hasUsage = usageLogs.length > 0;
+
+  // The header shows the three values that change while you work. Task totals
+  // and artifacts were seven cards competing for the same strip; they now live
+  // in the Task Board / Artifacts panels, which own that data already. The
+  // active-agent count moves into the Live badge, where "live" actually means it.
+  const clockKpi = (
+    <div className="hq-kpi-card highlight">
+      <span className="kpi-label">JAM</span>
+      <span className="kpi-val clock">{timeStr}</span>
+    </div>
+  );
+
+  const sprintLine = collaboration.isActive
+    ? `Sprint ${collaboration.currentStep}/${collaboration.totalSteps} — ${collaboration.topic}`
+    : 'Idle — belum ada sprint aktif';
 
   return (
     <header className="top-header-hq">
@@ -56,83 +83,83 @@ export function TopHeader({ onResetCamera }: TopHeaderProps) {
           <h1 className="hq-title">Kantor Virtual HQ</h1>
           <span className="hq-live-badge">
             <span className="live-dot" />
-            Live
+            {activeAgentsCount > 0 ? `${activeAgentsCount} aktif` : 'Idle'}
           </span>
         </div>
-        <div className="hq-subtitle">3D Multi-Agent Office • Active Sprint #03</div>
+        <div className="hq-subtitle">3D Multi-Agent Office • {sprintLine}</div>
       </div>
 
-      {/* 2. CENTER CONTROLS: THEME & CAMERA */}
+      {/* 2. CENTER CONTROL: a single disclosure instead of five always-on buttons.
+          Theme / camera / fullscreen are set-once and live behind it. Settings
+          is NOT duplicated here — the nav rail already owns that entry. */}
       <div className="hq-view-controls">
-        <button
-          className="hq-control-btn"
-          onClick={() => {
-            setActivePanel('settings');
-            setPanelOpen(true);
-          }}
-          title="Pengaturan Aplikasi"
-        >
-          ⚙️ Pengaturan
-        </button>
-        <button
-          className={`hq-control-btn ${settings.theme === 'light' ? 'active' : ''}`}
-          onClick={() => updateSettings({ theme: 'light' })}
-          title="Mode Terang (Daylight Office)"
-        >
-          ☀️ Terang
-        </button>
-        <button
-          className={`hq-control-btn ${settings.theme === 'dark' ? 'active' : ''}`}
-          onClick={() => updateSettings({ theme: 'dark' })}
-          title="Mode Gelap (Cyberpunk Night)"
-        >
-          🌙 Gelap
-        </button>
-        <button
-          className="hq-control-btn"
-          onClick={onResetCamera}
-          title="Reset ke sudut isometric awal"
-        >
-          📐 Sudut awal
-        </button>
-        <button
-          className="hq-control-btn"
-          onClick={handleFullscreen}
-          title="Layar penuh (Fullscreen)"
-        >
-          ⛶ Layar penuh
-        </button>
+        <div className="hq-menu-anchor">
+          <button
+            className={`hq-control-btn ${showViewMenu ? 'active' : ''}`}
+            onClick={() => setShowViewMenu((v) => !v)}
+            aria-expanded={showViewMenu}
+            title="Opsi tampilan"
+          >
+            🎛️ Tampilan ▾
+          </button>
+          {showViewMenu && (
+            <>
+              <div className="hq-menu-backdrop" onClick={() => setShowViewMenu(false)} />
+              <div className="hq-menu-popover" role="menu">
+                <button
+                  className={`hq-menu-item ${settings.theme === 'light' ? 'active' : ''}`}
+                  onClick={() => updateSettings({ theme: 'light' })}
+                >
+                  ☀️ Mode Terang
+                </button>
+                <button
+                  className={`hq-menu-item ${settings.theme === 'dark' ? 'active' : ''}`}
+                  onClick={() => updateSettings({ theme: 'dark' })}
+                >
+                  🌙 Mode Gelap
+                </button>
+                <button
+                  className="hq-menu-item"
+                  onClick={() => {
+                    onResetCamera();
+                    setShowViewMenu(false);
+                  }}
+                >
+                  📐 Sudut awal
+                </button>
+                <button
+                  className="hq-menu-item"
+                  onClick={() => {
+                    handleFullscreen();
+                    setShowViewMenu(false);
+                  }}
+                >
+                  ⛶ Layar penuh
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* 3. RIGHT KPI METRICS CARDS */}
+      {/* 3. RIGHT KPI METRICS — three values that move while you work.
+          JAM + the live-token pair. Everything else was either fake or belongs
+          to a panel that already renders it. */}
       <div className="hq-metrics-deck">
-        <div className="hq-kpi-card highlight">
-          <span className="kpi-label">JAM</span>
-          <span className="kpi-val clock">{timeStr}</span>
-        </div>
-        <div className="hq-kpi-card">
+        {clockKpi}
+        <div
+          className="hq-kpi-card"
+          title={hasUsage ? `${usageLogs.length} usage log` : 'Belum ada usage log'}
+        >
           <span className="kpi-label">TOKEN KELUAR</span>
-          <span className="kpi-val">778rb</span>
+          <span className="kpi-val">{hasUsage ? tokensOut.toLocaleString('id-ID') : '—'}</span>
         </div>
-        <div className="hq-kpi-card">
-          <span className="kpi-label">BIAYA KELUAR</span>
-          <span className="kpi-val">378rb</span>
-        </div>
-        <div className="hq-kpi-card">
-          <span className="kpi-label">AKURASI INTERAKSI</span>
-          <span className="kpi-val">21.00</span>
-        </div>
-        <div className="hq-kpi-card">
-          <span className="kpi-label">AKTIF</span>
-          <span className="kpi-val">602</span>
-        </div>
-        <div className="hq-kpi-card">
-          <span className="kpi-label">TIM AKTIF</span>
-          <span className="kpi-val text-green">{activeAgentsCount || 6}/6</span>
-        </div>
-        <div className="hq-kpi-card">
-          <span className="kpi-label">RAM AI</span>
-          <span className="kpi-val">1.2G free</span>
+        <div
+          className="hq-kpi-card"
+          title={hasUsage ? 'Estimasi biaya BYOK' : 'Belum ada usage log'}
+        >
+          <span className="kpi-label">BIAYA</span>
+          <span className="kpi-val">{hasUsage ? `$${totalCost.toFixed(4)}` : '—'}</span>
         </div>
       </div>
     </header>

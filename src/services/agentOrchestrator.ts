@@ -2,8 +2,18 @@
 // AgentOffice - Multi-Agent Collaboration Orchestrator
 // ============================================
 import { useAppStore } from '../store/useAppStore';
-import { sendMessageToAgent } from './llmService';
+import { sendMessageToAgent, isProviderUsable } from './llmService';
 import type { Message, Task, Artifact } from '../types';
+
+/**
+ * Marker prefixed to every scripted agent line.
+ *
+ * Steps 2-4 of the sprint are NOT wired to an LLM — they are fixed strings plus
+ * generated artifacts. Step 1 calls a real model when one is reachable. Without
+ * this marker a scripted line is indistinguishable from real model output, so
+ * the run reads as "the team did the work" when no model was ever called.
+ */
+const SIMULATED_PREFIX = '⚠️ [SIMULASI — bukan output model] ';
 
 /**
  * Run a full synchronized collaborative sprint across all agents
@@ -17,6 +27,26 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
   const uiuxAgent = agents.find((a) => a.id === 'ui-ux-designer') || agents[1];
   const frontendAgent = agents.find((a) => a.id === 'frontend-dev') || agents[2];
   const debuggerAgent = agents.find((a) => a.id === 'debugger') || agents[3];
+
+  // Refuse to fake a collaboration when nothing can reach a model. Steps 2-4
+  // are hardcoded, so running them with no key would post a scripted "QA audit
+  // passed, ready to deploy" for work that was never done.
+  if (!providers.some(isProviderUsable)) {
+    useAppStore.getState().addMessage({
+      id: `msg-collab-${Date.now()}-nokey`,
+      role: 'system',
+      agentId: leadAgent.id,
+      targetAgentId: 'all',
+      channel: 'team',
+      content:
+        `Sprint dibatalkan: belum ada API key, jadi tidak ada model yang bisa dihubungi.\n\n` +
+        `Isi API key di Settings > tab "Providers" (Anthropic / Google / OpenAI), ` +
+        `atau tambah endpoint lokal keyless lewat "Add Custom Endpoint" untuk Ollama / LM Studio.\n\n` +
+        `Sprint tidak dijalankan daripada menampilkan output palsu.`,
+      timestamp: Date.now(),
+    });
+    return;
+  }
 
   // Helper delay
   const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -72,7 +102,7 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
   let leadResponse = '';
   const leadProvider = providers.find((p) => p.provider === leadAgent.modelConfig.provider);
 
-  if (leadProvider?.apiKey) {
+  if (isProviderUsable(leadProvider)) {
     try {
       leadResponse = await sendMessageToAgent(
         leadAgent,
@@ -85,7 +115,7 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
   }
 
   if (!leadResponse) {
-    leadResponse = `[Skill: 📋 Task Decomposition & Architecture] @UI/UX Designer Saya telah menganalisis kebutuhan "${userGoal}". Tolong rancang wireframe interaktif, user flow, dan palet warna yang modern untuk fitur ini. Setelah desain siap, handoff langsung ke @Frontend Dev agar dapat segera dibuatkan komponennya.`;
+    leadResponse = `${SIMULATED_PREFIX}[Skill: 📋 Task Decomposition & Architecture] @UI/UX Designer Saya telah menganalisis kebutuhan "${userGoal}". Tolong rancang wireframe interaktif, user flow, dan palet warna yang modern untuk fitur ini. Setelah desain siap, handoff langsung ke @Frontend Dev agar dapat segera dibuatkan komponennya.`;
   }
 
   const leadMsg: Message = {
@@ -134,7 +164,7 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
   // Generate an Artifact for UI/UX
   const designArtifact: Artifact = {
     id: `art-uiux-${Date.now()}`,
-    title: `Design Spec: ${userGoal}`,
+    title: `[SIMULASI] Design Spec: ${userGoal}`,
     type: 'code',
     language: 'html',
     version: 1,
@@ -202,7 +232,7 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
     agentId: uiuxAgent.id,
     targetAgentId: frontendAgent.id,
     channel: 'team',
-    content: `[Skill: 🎨 Cyberpunk Design System & Wireframing] @Lead Engineer @Frontend Dev Desain sistem dan wireframe visual untuk "${userGoal}" sudah saya rampungkan! Komponen telah dioptimalkan untuk aksesibilitas dan saya simpan di tab Artifacts. @Frontend Dev silakan lanjutkan implementasi kodenya.`,
+    content: `${SIMULATED_PREFIX}[Skill: 🎨 Cyberpunk Design System & Wireframing] @Lead Engineer @Frontend Dev Desain sistem dan wireframe visual untuk "${userGoal}" sudah saya rampungkan! Komponen telah dioptimalkan untuk aksesibilitas dan saya simpan di tab Artifacts. @Frontend Dev silakan lanjutkan implementasi kodenya.`,
     taskId: uiuxTaskId,
     timestamp: Date.now(),
   };
@@ -242,7 +272,7 @@ export async function runCollaborativeSprint(userGoal: string): Promise<void> {
   // Generate code artifact
   const codeArtifact: Artifact = {
     id: `art-fe-${Date.now()}`,
-    title: `Component: ${userGoal}`,
+    title: `[SIMULASI] Component: ${userGoal}`,
     type: 'code',
     language: 'typescript',
     version: 1,
@@ -275,7 +305,7 @@ export function FeatureModule() {
     agentId: frontendAgent.id,
     targetAgentId: debuggerAgent.id,
     channel: 'team',
-    content: `[Skill: ⚛️ React 19 & Three.js Canvas Engineering] @UI/UX Designer Desainnya presisi sekali! @Lead Engineer Kode komponen React dan state integration sudah saya selesaikan dan disimpan ke Artifacts. @Debugger tolong lakukan verifikasi menyeluruh: cek potential memory leak dan uji error handling-nya ya.`,
+    content: `${SIMULATED_PREFIX}[Skill: ⚛️ React 19 & Three.js Canvas Engineering] @UI/UX Designer Desainnya presisi sekali! @Lead Engineer Kode komponen React dan state integration sudah saya selesaikan dan disimpan ke Artifacts. @Debugger tolong lakukan verifikasi menyeluruh: cek potential memory leak dan uji error handling-nya ya.`,
     taskId: frontendTaskId,
     timestamp: Date.now(),
   };
@@ -318,7 +348,7 @@ export function FeatureModule() {
     agentId: debuggerAgent.id,
     targetAgentId: leadAgent.id,
     channel: 'team',
-    content: `[Skill: ⏱️ GPU Memory Leak & Performance Profiling] @Frontend Dev @Lead Engineer Audit selesai: tidak ditemukan runtime exception, render lifecycle efisien, dan semua boundary aman! Fitur '${userGoal}' lolos uji kualitas dan siap dideploy ke production. ✅`,
+    content: `${SIMULATED_PREFIX}[Skill: ⏱️ GPU Memory Leak & Performance Profiling] @Frontend Dev @Lead Engineer Audit selesai: tidak ditemukan runtime exception, render lifecycle efisien, dan semua boundary aman! Fitur '${userGoal}' lolos uji kualitas dan siap dideploy ke production. ✅`,
     taskId: debugTaskId,
     timestamp: Date.now(),
   };

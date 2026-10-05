@@ -1,6 +1,6 @@
 // ============================================
 // AgentOffice - Live Activity Feed ("Aktivitas langsung")
-// Filter pills by agent + Real-time event log
+// Compact agent filter + Real-time event log
 // ============================================
 import { useAppStore } from '../../store/useAppStore';
 import './LiveActivityPanel.css';
@@ -23,33 +23,32 @@ export function LiveActivityPanel({ onSelectAgent }: LiveActivityPanelProps) {
     <aside className="activity-panel-hq">
       <div className="activity-panel-header">
         <h2 className="activity-panel-title">Aktivitas langsung</h2>
-      </div>
 
-      {/* Filter Tabs Row */}
-      <div className="activity-filter-scroll">
-        <button
-          className={`activity-filter-pill ${selectedFilter === 'all' ? 'active' : ''}`}
-          onClick={() => setSelectedFilter('all')}
+        {/* Was a scrollable row of ten pills (Semua + all 9 agents) that wrapped
+            to several lines and pushed the feed down. A select keeps the same
+            filter with a fixed, predictable height. */}
+        <select
+          className="activity-filter-select"
+          value={selectedFilter}
+          onChange={(e) => setSelectedFilter(e.target.value)}
+          title="Filter aktivitas berdasarkan agen"
         >
-          Semua
-        </button>
-        {agents.map((agent) => (
-          <button
-            key={`filter-${agent.id}`}
-            className={`activity-filter-pill ${selectedFilter === agent.id ? 'active' : ''}`}
-            onClick={() => setSelectedFilter(agent.id)}
-            style={{
-              borderColor: selectedFilter === agent.id ? agent.color : undefined,
-              color: selectedFilter === agent.id ? agent.color : undefined,
-            }}
-          >
-            {agent.name}
-          </button>
-        ))}
+          <option value="all">Semua agen</option>
+          {agents.map((agent) => (
+            <option key={`filter-${agent.id}`} value={agent.id}>
+              {agent.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Activities Feed List */}
       <div className="activity-list-container">
+        {filteredActivities.length === 0 && (
+          <div className="activity-empty">
+            Tidak ada aktivitas{selectedFilter !== 'all' ? ' untuk agen ini' : ''}.
+          </div>
+        )}
         {filteredActivities.map((act) => {
           const agent = agents.find((a) => a.id === act.agentId);
           return (

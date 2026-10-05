@@ -3,8 +3,13 @@
    ============================================ */
 .right-panel {
   width: 440px;
-  max-width: calc(100vw - 70px);
+  /* 72px nav rail + a little breathing room. */
+  max-width: calc(100vw - 82px);
   height: 100%;
+  /* Was a column-flex item, where width:440px could not be squeezed. Now that
+     .app-root is a row, flex-shrink would let a narrow window compress the
+     drawer below 440px, so pin it back to the intended width. */
+  flex-shrink: 0;
   background: rgba(13, 14, 28, 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);

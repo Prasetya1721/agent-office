@@ -131,7 +131,80 @@ body.dark .hq-control-btn:hover {
   box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
 }
 
-/* 3. Right KPI Metrics Cards */
+/* --- View-options disclosure (theme / camera / fullscreen) --- */
+.hq-menu-anchor {
+  position: relative;
+}
+
+/* Invisible click-catcher: closes the popover on any outside click without
+   wiring a document listener. */
+.hq-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.hq-menu-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 61;
+  min-width: 168px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+}
+
+body.dark .hq-menu-popover {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.hq-menu-item {
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary, #475569);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+body.dark .hq-menu-item {
+  color: #cbd5e1;
+}
+
+.hq-menu-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary, #0f172a);
+}
+
+body.dark .hq-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+.hq-menu-item.active {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+body.dark .hq-menu-item.active {
+  color: #818cf8;
+}
+
+/* --- KPI deck --- */
+/* Now three cards instead of seven; the strip no longer fights the title and
+   the controls for width on a laptop screen. */
 .hq-metrics-deck {
   display: flex;
   align-items: center;

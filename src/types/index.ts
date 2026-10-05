@@ -5,7 +5,7 @@
 // --- Agent Types ---
 export type AgentStatus = 'idle' | 'thinking' | 'working' | 'discussing' | 'done' | 'error';
 
-export type RoomZone = 'work' | 'break' | 'meeting';
+export type RoomZone = 'work' | 'break' | 'meeting' | 'lounge';
 
 export interface Agent {
   id: string;

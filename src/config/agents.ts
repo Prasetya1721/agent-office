@@ -15,7 +15,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'anthropic', model: 'claude-sonnet-4-20250514', temperature: 0.3, maxTokens: 4096 },
     skills: ['task-planning', 'system-architecture', 'code-review'],
     tools: ['task_planner', 'agent_router'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#f59e0b',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#f59e0b',
   },
   {
     id: 'ui-ux-designer',
@@ -28,7 +28,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'openai', model: 'gpt-4o', temperature: 0.7, maxTokens: 4096 },
     skills: ['wireframing', 'design-system', 'accessibility-audit'],
     tools: ['grid_builder', 'color_harmonies'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#ec4899',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#ec4899',
   },
   {
     id: 'frontend-dev',
@@ -41,7 +41,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'anthropic', model: 'claude-sonnet-4-20250514', temperature: 0.2, maxTokens: 8192 },
     skills: ['react-ts-dev', 'state-management', 'api-integration'],
     tools: ['ts_compiler', 'action_dispatcher'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#10b981',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#10b981',
   },
   {
     id: 'backend-dev',
@@ -54,7 +54,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'google', model: 'gemini-2.5-flash', temperature: 0.2, maxTokens: 4096 },
     skills: ['api-architecture', 'database-schema', 'query-optimization'],
     tools: ['migration_manager', 'sql_explainer'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#8b5cf6',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#8b5cf6',
   },
   {
     id: 'debugger',
@@ -67,7 +67,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'anthropic', model: 'claude-sonnet-4-20250514', temperature: 0.2, maxTokens: 4096 },
     skills: ['runtime-debugger', 'root-cause'],
     tools: ['stack_analyzer', 'log_reader'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#ef4444',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#ef4444',
   },
   {
     id: 'qa-tester',
@@ -80,7 +80,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     modelConfig: { provider: 'google', model: 'gemini-2.5-flash', temperature: 0.2, maxTokens: 4096 },
     skills: ['unit-test-gen', 'scenario-planning'],
     tools: ['test_generator'],
-    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'work', color: '#f97316',
+    status: 'idle', currentTaskSummary: 'Menunggu tugas', sessionStats: '0 ses', roomZone: 'lounge', color: '#f97316',
   },
   {
     id: 'product-manager',

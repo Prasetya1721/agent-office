@@ -158,31 +158,45 @@ body.dark .backlog-checkbox-row {
   overflow: hidden;
 }
 
-.chat-channel-pills {
+/* Channel picker — a labelled select replaces the 10-pill row. */
+.chat-channel-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   padding: 8px 12px;
-  overflow-x: auto;
   border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
 }
 
-.chat-pill {
-  padding: 3px 8px;
-  font-size: 10.5px;
+body.dark .chat-channel-row {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.chat-channel-label {
+  font-size: 10px;
   font-weight: 700;
-  border-radius: 6px;
-  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
-  background: transparent;
-  color: var(--text-secondary, #64748b);
-  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted, #94a3b8);
   white-space: nowrap;
 }
 
-.chat-pill.active {
-  background: rgba(37, 99, 235, 0.12);
-  border-color: #2563eb !important;
-  color: #2563eb !important;
+.chat-channel-select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.12));
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+}
+
+body.dark .chat-channel-select {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
 }
 
 .sprint-status-banner {

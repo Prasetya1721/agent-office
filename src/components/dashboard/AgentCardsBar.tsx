@@ -1,12 +1,11 @@
 // ============================================
 // AgentOffice - Bottom Agent Cards Bar
-// Matching Reference Screenshot:
-// 6 cards side-by-side with Agent name, tag, status button, role,
-// current task line, session stats, and equipped skills
+// Compact roster: name, status toggle, role, current task.
+// Skill chips + stats were moved out — they are what made each card 5 lines
+// tall, and skills already have a dedicated modal (click the card, or the
+// "+ Skill" affordance is reachable from the Skill Inspector).
 // ============================================
 import { useAppStore } from '../../store/useAppStore';
-import { SKILLS_REGISTRY } from '../../config/skills';
-import type { Skill } from '../../types';
 import './AgentCardsBar.css';
 
 interface AgentCardsBarProps {
@@ -24,15 +23,22 @@ export function AgentCardsBar({ onSelectAgent, onOpenSkillModal }: AgentCardsBar
       {agents.map((agent) => {
         const isSelected = selectedAgentId === agent.id;
         const isWorking = agent.status === 'working' || agent.status === 'thinking' || agent.status === 'discussing';
-        const agentSkills = agent.skills
-          .map((skId: string) => SKILLS_REGISTRY.find((sk: Skill) => sk.id === skId))
-          .filter((sk): sk is Skill => Boolean(sk));
 
         return (
           <div
             key={agent.id}
             className={`agent-deck-card ${isSelected ? 'selected' : ''}`}
             onClick={() => onSelectAgent(agent.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelectAgent(agent.id);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
+            title={`${agent.name} — ${agent.role}`}
             style={{
               borderTopColor: agent.color,
             }}
@@ -71,37 +77,18 @@ export function AgentCardsBar({ onSelectAgent, onOpenSkillModal }: AgentCardsBar
               <span className="play-icon">▶</span> {agent.currentTaskSummary}
             </div>
 
-            {/* Metrics stats line */}
-            <div className="card-stats-line">
-              {agent.sessionStats}
-            </div>
-
-            {/* Equipped Skills Row */}
-            <div className="card-skills-row">
-              {agentSkills.slice(0, 3).map((sk) => (
-                <span
-                  key={sk?.id}
-                  className="card-skill-chip"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenSkillModal(agent.id);
-                  }}
-                  title={sk?.description}
-                >
-                  {sk?.icon} {sk?.name}
-                </span>
-              ))}
-              <button
-                className="card-add-skill-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenSkillModal(agent.id);
-                }}
-                title="Kelola & Tambah Skill Agen"
-              >
-                + Skill
-              </button>
-            </div>
+            {/* Skill access — kept as one lightweight affordance so the modal is
+                still reachable without the chips that made the card tall. */}
+            <button
+              className="card-skills-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenSkillModal(agent.id);
+              }}
+              title="Lihat & kelola skill agen"
+            >
+              🧩 Skill
+            </button>
           </div>
         );
       })}

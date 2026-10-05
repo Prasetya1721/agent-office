@@ -37,12 +37,22 @@ body.dark {
 
 .app-root {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background-color: var(--bg-primary);
   position: relative;
+}
+
+/* Everything that used to sit directly under .app-root (column flex). Kept in a
+   column of its own so the 60px nav rail can sit beside it as a row sibling. */
+.app-main-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
 }
 
 /* Main Grid: Left Activity + Center 3D + Right Backlog */
